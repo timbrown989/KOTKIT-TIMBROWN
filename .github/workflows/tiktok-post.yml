@@ -1,0 +1,32 @@
+name: Post new videos to TikTok
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "videos/**/*.mp4"
+      - "videos/**/*.mov"
+      - "videos/**/*.webm"
+
+permissions:
+  contents: read
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Refresh credentials and post new videos
+        run: python3 scripts/tiktok_post.py
+        env:
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          TIKTOK_SECRETS_UPDATE_TOKEN: ${{ secrets.TIKTOK_SECRETS_UPDATE_TOKEN }}
